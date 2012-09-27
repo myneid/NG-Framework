@@ -34,27 +34,141 @@ namespace NG;
  */
 class Query {
 
+    /**
+     * $query
+     * Holds full query string
+     * @access protected
+     * @var string
+     */
     protected $query = '';
+
+    /**
+     * $select
+     * Holds select variables, can be string or array
+     * @access private
+     * @var array|string
+     */
     private $select;
+
+    /**
+     * $table
+     * Holds table name
+     * @access private
+     * @var string
+     */
     private $table;
+
+    /**
+     * $insertData
+     * Holds inset data
+     * @access private
+     * @var array
+     */
     private $insertData;
+
+    /**
+     * $updateData
+     * Holds update data
+     * @access private
+     * @var array
+     */
     private $updateData;
-    private $deteleTable;
+
+    /**
+     * $deleteTable
+     * Holds boolean value if delete query is requested or not
+     * @access private
+     * @var boolean
+     */
+    private $deleteTable;
+
+    /**
+     * $from
+     * Holds from string or array
+     * @access private 
+     * @var string|array
+     */
     private $from;
-    private $set;
+
+    /**
+     * $join
+     * Holds join data as an array
+     * @access private
+     * @var array
+     */
     private $join;
+
+    /**
+     * $innerJoin
+     * Holds innerJoin data as an array
+     * @access private
+     * @var array
+     */
     private $innerJoin;
+
+    /**
+     * $leftJoin
+     * Holds leftJoin data as an array
+     * @access private
+     * @var array
+     */
     private $leftJoin;
+
+    /**
+     * $rightJoin
+     * Holds rightJoin data as an array
+     * @access private
+     * @var array
+     */
     private $rightJoin;
+
+    /**
+     * $where
+     * Holds where clause
+     * @access private
+     * @var string
+     */
     private $where;
+
+    /**
+     * $groupBy
+     * Holds groupdBy clause
+     * @access private
+     * @var string
+     */
     private $groupBy;
+
+    /**
+     * $having
+     * Holds having clause
+     * @access private
+     * @var string
+     */
     private $having;
 
+    /**
+     * select()
+     * Sets Select Object, Returns Build()
+     * @see build()
+     * @access public
+     * @param string $select
+     * @return object
+     */
     public function select($select = "*") {
         $this->select = $select;
         return $this->build();
     }
 
+    /**
+     * insert()
+     * Sets Table name and insert data
+     * @access public
+     * @see build()
+     * @param string $table
+     * @param array $data
+     * @return object
+     * @throws NG_Exception
+     */
     public function insert($table, $data) {
         $this->table = $table;
         if (!isset($data) or !is_array($data)):
@@ -64,6 +178,16 @@ class Query {
         return $this->build();
     }
 
+    /**
+     * update()
+     * Sets Table name and data to update
+     * @access public
+     * @see build()
+     * @param string $table
+     * @param type $data
+     * @return object
+     * @throws NG_Exception
+     */
     public function update($table, $data) {
         $this->table = $table;
         if (!isset($data) or !is_array($data)):
@@ -73,11 +197,27 @@ class Query {
         return $this->build();
     }
 
+    /**
+     * delete()
+     * Sets Delete flag object
+     * @access public
+     * @see build()
+     * @return object
+     */
     public function delete() {
-        $this->deteleTable = true;
+        $this->deleteTable = true;
         return $this->build();
     }
 
+    /**
+     * from()
+     * Sets from object
+     * @access public
+     * @see build()
+     * @param string $from
+     * @return object
+     * @throws NG_Exception
+     */
     public function from($from = null) {
         if (!isset($from)):
             throw new NG_Exception("FROM is Required to build query");
@@ -86,45 +226,115 @@ class Query {
         return $this->build();
     }
 
+    /**
+     * join()
+     * Sets join object with table and clause
+     * @access public
+     * @see build()
+     * @param string $table
+     * @param string $clause
+     * @return object
+     */
     public function join($table, $clause) {
         $this->join['table'] = $table;
         $this->join['clause'] = $clause;
         return $this->build();
     }
 
+    /**
+     * innerJoin()
+     * Sets inner join object with table and clause
+     * @access public
+     * @see build()
+     * @param string $table
+     * @param string $clause
+     * @return object
+     */
     public function innerJoin($table, $clause) {
         $this->innerJoin['table'] = $table;
         $this->innerJoin['clause'] = $clause;
         return $this->build();
     }
 
+    /**
+     * leftKoin()
+     * Sets left join object with table and clause
+     * @access public
+     * @see build()
+     * @param string $table
+     * @param string $clause
+     * @return object
+     */
     public function leftJoin($table, $clause) {
         $this->leftJoin['table'] = $table;
         $this->leftJoin['clause'] = $clause;
         return $this->build();
     }
 
+    /**
+     * rightJoin()
+     * Sets right join object with table and clause
+     * @access public
+     * @see build()
+     * @param string $table
+     * @param string $clause
+     * @return object
+     */
     public function rightJoin($table, $clause) {
         $this->rightJoin['table'] = $table;
         $this->rightJoin['clause'] = $clause;
         return $this->build();
     }
 
+    /**
+     * where()
+     * Sets where object
+     * example: where("foo = ?", "bar")
+     * @see build()
+     * @param string $where
+     * @param string $value
+     * @return object
+     */
     public function where($where, $value = null) {
         $this->where = str_replace("?", "'" . addslashes($value) . "'", $where);
         return $this->build();
     }
 
+    /**
+     * group()
+     * Sets groupBy object
+     * @see build()
+     * @param string $field
+     * @return object
+     */
     public function group($field) {
         $this->groupBy = $field;
         return $this->build();
     }
 
+    /**
+     * having()
+     * Set having object
+     * example: having("foo > ?", "bar")
+     * @param string $condition
+     * @param string $value
+     * @return object
+     */
     public function having($condition, $value = null) {
         $this->having = str_replace("?", "'" . addslashes($value) . "'", $condition);
         return $this->build();
     }
 
+    /**
+     * order()
+     * Sets orderBy Object
+     * Example: order("FOO", "DESC") or order("RAND(" . date("Ymd") . ")", "DESC")
+     * @access public
+     * @see build()
+     * @param string $field
+     * @param string $clause
+     * @return object
+     */
     public function order($field, $clause) {
         if (strpos($field, "(") === false):
             $field = "`" . $field . "`";
@@ -133,11 +343,25 @@ class Query {
         return $this->build();
     }
 
+    /**
+     * limit()
+     * Sets limit object
+     * @access public
+     * @see build()
+     * @param int $int
+     * @return object
+     */
     public function limit($int) {
         $this->limit = $int;
         return $this->build();
     }
 
+    /**
+     * build()
+     * Builds query and sets as query object
+     * @access private
+     * @return \NG\Query
+     */
     private function build() {
         if (isset($this->table) and isset($this->insertData)):
             $this->query = "INSERT INTO `" . $this->table . "` ";
@@ -155,7 +379,7 @@ class Query {
                 $this->query = substr($this->query, 0, -2) . " ";
             endif;
         endif;
-        if (isset($this->deteleTable)):
+        if (isset($this->deleteTable)):
             $this->query = "DELETE ";
         endif;
         if (isset($this->select)):
@@ -208,6 +432,12 @@ class Query {
         return $this;
     }
 
+    /**
+     * unserObjects()
+     * unserts Objects
+     * @access private
+     * @return void
+     */
     private function unsetObjects() {
         foreach ($this as $property => $value):
             if ($this->$property !== $this->query):
@@ -218,7 +448,8 @@ class Query {
 
     /**
      * __toString()
-     * return full query string
+     * return query as a string
+     * @access public
      * @return string 
      */
     public function __toString() {
