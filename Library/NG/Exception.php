@@ -55,11 +55,4 @@ class Exception extends \Exception {
         return __CLASS__ . ": [{$this->code}]: {$this->message} \n";
     }
 
-    /**
-     * Test
-     */
-    public function customFunction() {
-        echo "A custom function for this type of exception\n";
-    }
-
 }
