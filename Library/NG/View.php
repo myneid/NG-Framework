@@ -49,36 +49,87 @@ class View {
      * @var string
      */
     protected $action;
+
     /**
-     * @layout
-     * 
-     * @var bool
+     * $layout
+     * @access protected
+     * @var boolean
      */
     protected $layout = true;
+
+    /**
+     * $noRender
+     * @access protected
+     * @var boolean
+     */
     protected $noRender = false;
+
+    /**
+     * $layoutFile
+     * @access protected
+     * @var string
+     */
     protected $layoutFile = 'Layout';
 
+    /**
+     * __construct()
+     * Sets controller and action object
+     * @param string $controller
+     * @param string $action
+     * @access public
+     */
     public function __construct($controller, $action) {
         $this->controller = $controller;
         $this->action = strtolower($action);
     }
 
+    /**
+     * setLayout()
+     * Sets layout object
+     * @access public
+     * @param boolean $bool
+     */
     public function setLayout($bool = true) {
         $this->layout = $bool;
     }
 
+    /**
+     * setNoRender()
+     * Sets noRender object
+     * @access public
+     * @param boolean $bool
+     */
     public function setNoRender($bool = false) {
         $this->noRender = $bool;
     }
 
+    /**
+     * setLayoutFile()
+     * sets layout filename object
+     * @access public
+     * @param string $filename
+     */
     public function setLayoutFile($filename) {
         $this->layoutFile = $filename;
     }
 
+    /**
+     * set()
+     * Set object to be used from view
+     * @access public
+     * @param string $name
+     * @param string $value
+     */
     public function set($name, $value) {
         $this->{$name} = $value;
     }
 
+    /**
+     * loadLayout()
+     * Includes layout file
+     * @access public
+     * @throws Exception
+     */
     public function loadLayout() {
         if ($this->layout):
             try {
@@ -97,6 +148,12 @@ class View {
         endif;
     }
 
+    /**
+     * render()
+     * Check is render is enabled and includes view file
+     * @access public
+     * @throws Exception
+     */
     public function render() {
         if (!$this->noRender):
             try {

@@ -175,8 +175,9 @@ class Authentication {
 
     /**
      * setCredentialColumn()
-     * 
-     * @param type $credentialColumn
+     * sets credential column object
+     * @access public
+     * @param string $credentialColumn
      * @return boolean|\NG\Authentication
      */
     public function setCredentialColumn($credentialColumn) {
@@ -187,6 +188,13 @@ class Authentication {
         return $this;
     }
 
+    /**
+     * setCredential
+     * sets credential object
+     * @access public
+     * @param string $credential
+     * @return boolean|\NG\Authentication
+     */
     public function setCredential($credential) {
         if (!isset($credential)):
             return false;
@@ -195,6 +203,12 @@ class Authentication {
         return $this;
     }
 
+    /**
+     * isValid()
+     * Checks if user is authenticated
+     * @access public
+     * @return boolean
+     */
     public function isValid() {
         $auth = \NG\Session::get($this->sessionName);
         if ($auth):
@@ -216,6 +230,12 @@ class Authentication {
         return false;
     }
 
+    /**
+     * checkUserInDB()
+     * Builds select query to check user in DB and returns result as an array
+     * @access private
+     * @return array|false
+     */
     private function checkUserInDB() {
         return $this->dbAdapter->fetchRow("SELECT * FROM `" . $this->table . "`
                     WHERE `" . $this->identityColumn . "` = '" . $this->identity . "'
@@ -223,10 +243,23 @@ class Authentication {
                     LIMIT 1");
     }
 
+    /**
+     * setSessionIdentity
+     * sets identity in the session
+     * @access private
+     * @param array $identity
+     */
     private function setSessionIdentity($identity) {
         \NG\Session::set($this->sessionName, serialize($identity));
     }
 
+    /**
+     * getIdentity()
+     * checks if user is authenticated and return user data from session
+     * @see isValid()
+     * @access public
+     * @return array|boolean
+     */
     public function getIdentity() {
         if ($this->isValid()):
             return unserialize(\NG\Session::get($this->sessionName));
@@ -234,6 +267,12 @@ class Authentication {
         return false;
     }
 
+    /**
+     * clearIdentity()
+     * sets auth session to null
+     * @access public
+     * @return void
+     */
     public function clearIdentity() {
         \NG\Session::set($this->sessionName, NULL);
     }
