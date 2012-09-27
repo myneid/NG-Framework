@@ -58,11 +58,26 @@ class Session {
         return self::$instance;
     }
 
+    /**
+     * set()
+     * sets PHP session
+     * @access public
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
     public static function set($key, $value) {
         self::init();
         $_SESSION[$key] = $value;
     }
 
+    /**
+     * get()
+     * Gets PHP Session, Returns false if Session not set
+     * @access public
+	 * @param string $key
+     * @return string|boolean
+     */
     public static function get($key) {
         self::init();
         if (isset($_SESSION[$key])):
