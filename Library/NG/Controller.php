@@ -35,11 +35,11 @@ namespace NG;
 class Controller {
 
     /**
-     * $view
+     * $_view
      * Holds View Instance
      * @var object 
      */
-    protected $view;
+    protected $_view;
 
     /**
      * __construct()
@@ -52,7 +52,7 @@ class Controller {
     public function __construct() {
         $className = \NG\Route::getController();
         $method = \NG\Route::getAction();
-        $this->view = new \NG\View($className, $method);
+        $this->_view = new \NG\View($className, $method);
         if (method_exists($this, 'init')):
             $this->init();
         endif;
@@ -67,7 +67,7 @@ class Controller {
      * @access public
      */
     public function set($name, $value) {
-        $this->view->set($name, $value);
+        $this->_view->set($name, $value);
     }
 
     /**
@@ -77,7 +77,7 @@ class Controller {
      * @return void
      */
     public function __destruct() {
-        $this->view->loadLayout();
+        $this->_view->loadLayout();
     }
 
 }
