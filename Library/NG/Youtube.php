@@ -26,58 +26,12 @@
 namespace NG;
 
 /**
- * Controller
+ * Youtube
  * @package NG
  * @subpackage library
  * @version 0.1
  * @copyright (c) 2012, Nick Gejadze
  */
-class Controller {
-
-    /**
-     * $view
-     * Holds View Instance
-     * @var object 
-     */
-    protected $view;
-
-    /**
-     * __construct()
-     * check if init() method is declared and runs
-     * @see \NG\Route
-     * @see \NG\View
-     * @access public
-     * @return void
-     */
-    public function __construct() {
-        $className = \NG\Route::getController();
-        $method = \NG\Route::getAction();
-        $this->view = new \NG\View($className, $method);
-        if (method_exists($this, 'init')):
-            $this->init();
-        endif;
-    }
-
-    /**
-     * set()
-     * Sets View object
-     * @param type $name
-     * @param type $value
-     * @return void
-     * @access public
-     */
-    public function set($name, $value) {
-        $this->view->set($name, $value);
-    }
-
-    /**
-     * __destruct()
-     * loads layout from view
-     * @access public
-     * @return void
-     */
-    public function __destruct() {
-        $this->view->loadLayout();
-    }
-
+class Youtube {
+    
 }

@@ -104,10 +104,10 @@ class Authentication {
         if (isset($table)):
             $this->setDBTable($table);
         endif;
-        if (isset($identity)):
+        if (isset($identityColumn)):
             $this->setIdentityColumn($identityColumn);
         endif;
-        if (isset($credential)):
+        if (isset($credentialColumn)):
             $this->setCredentialColumn($credentialColumn);
         endif;
         return $this;
@@ -220,13 +220,12 @@ class Authentication {
                 AND isset($this->identity)
                 AND isset($this->credentialColumn)
                 AND isset($this->credential)):
-            $user = $this->checkUserInDB();
+            $user = $this->checkUserInDB();        
             if (isset($user) and is_array($user)):
                 $this->setSessionIdentity($user);
                 return true;
-            endif;
-            return false;
-        endif;
+            endif;            
+        endif;               
         return false;
     }
 

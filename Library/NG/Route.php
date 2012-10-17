@@ -312,13 +312,12 @@ class Route {
                     $msg = '302 Found';
                     break;
             endswitch;
-        endif;
+        endif;        
         if (isset($msg)):
             header('HTTP/1.1 ' . $msg);
-        endif;
-        $url = preg_replace('!^/*!', '', $url);
-        header("Location: " . self::getBaseURL() . '/' . $url);
-        exit;
+        endif;        
+        header("Location: ". $url);
+        exit();
     }
 
 }

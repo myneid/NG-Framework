@@ -64,7 +64,7 @@ class Uri {
      * @access protected 
      * @var string 
      */
-    protected static $baseURL;
+    protected $baseURL;
 
     /**
      * __construct
@@ -97,10 +97,10 @@ class Uri {
      * @return string
      */
     public static function baseUrl() {
-        if (!isset(self::$baseURL) OR empty(self::$baseURL)):
-            self::$baseURL = 'http://' . $_SERVER['HTTP_HOST'] . "/";
+        if (!isset(self::init()->baseURL) OR empty(self::init()->baseURL)):
+            self::setBaseUrl('http://' . $_SERVER['HTTP_HOST'] . "/");
         endif;
-        return self::$baseURL;
+        return self::init()->baseURL;
     }
 
     /**
@@ -182,4 +182,3 @@ class Uri {
 
 }
 
-?>

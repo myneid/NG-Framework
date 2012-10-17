@@ -93,7 +93,12 @@ class Bootstrap {
     private function _loadController() {
         if (!$this->_controllerLoaded):
             $className = \NG\Route::getController() . "Controller";
-            $app = new $className;
+            if (class_exists($className)):
+                $app = new $className;
+            else:
+                \NG\Route::redirect(\NG\Uri::baseUrl() . "/error/notfound", "404");
+                exit();
+            endif;
             $this->_controllerLoaded = true;
             $method = \NG\Route::getAction() . "Action";
             if (method_exists($app, $method)):
