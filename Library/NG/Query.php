@@ -131,6 +131,22 @@ class Query {
     private $where;
 
     /**
+     * $andWhere
+     * Holds where clause
+     * @access private
+     * @var array
+     */
+    private $andWhere;
+
+    /**
+     * $orWhere
+     * Holds where clause
+     * @access private
+     * @var array
+     */
+    private $orWhere;
+
+    /**
      * $groupBy
      * Holds groupdBy clause
      * @access private
@@ -148,25 +164,32 @@ class Query {
 
     /**
      * select()
-     * Sets Select Object, Returns Build()
-     * @see build()
+     * Starts select statement
      * @access public
-     * @param string $select
-     * @return object
+     * @param string $select Default '*' , The array of strings to select from database
+     * @return object \NG\Query()
      */
     public function select($select = "*") {
         $this->select = $select;
-        return $this->build();
+        if (isset($this->select)):
+            if (is_array($this->select)):
+                foreach ($this->select as $key => $value):
+                    $this->select[$key] = $this->escapeField($value);
+                endforeach;
+                $this->select = implode(", ", $this->select);
+            endif;
+            $this->query = "SELECT " . $this->select . " ";
+        endif;
+        return $this;
     }
 
     /**
      * insert()
-     * Sets Table name and insert data
-     * @access public
-     * @see build()
-     * @param string $table
-     * @param array $data
-     * @return object
+     * Builds insert statement 
+     * @access public     
+     * @param string $table Table name you want to insert into
+     * @param array $data Array of strings, example array("fieldname" => "value")
+     * @return object \NG\Query()
      * @throws NG_Exception
      */
     public function insert($table, $data) {
@@ -175,17 +198,23 @@ class Query {
             throw new NG_Exception("Insert Values are required to build query");
         endif;
         $this->insertData = $data;
-        return $this->build();
+        if (isset($this->table) and isset($this->insertData)):
+            $this->query = "INSERT INTO `" . $this->table . "` ";
+            $fields = implode("`, `", array_keys($this->insertData));
+            $this->query.= "(`" . $fields . "`)";
+            $values = implode("', '", $this->insertData);
+            $this->query.= " VALUES ('" . $values . "')";
+        endif;
+        return $this;
     }
 
     /**
      * update()
-     * Sets Table name and data to update
-     * @access public
-     * @see build()
-     * @param string $table
-     * @param type $data
-     * @return object
+     * Builds update statement
+     * @access public     
+     * @param string $table Table name you want to update
+     * @param type $data Array of strings that needs to be updated, example array("fieldname" => "value");
+     * @return object \NG\Query()
      * @throws NG_Exception
      */
     public function update($table, $data) {
@@ -194,182 +223,6 @@ class Query {
             throw new NG_Exception("Update Values are required to build query");
         endif;
         $this->updateData = $data;
-        return $this->build();
-    }
-
-    /**
-     * delete()
-     * Sets Delete flag object
-     * @access public
-     * @see build()
-     * @return object
-     */
-    public function delete() {
-        $this->deleteTable = true;
-        return $this->build();
-    }
-
-    /**
-     * from()
-     * Sets from object
-     * @access public
-     * @see build()
-     * @param string $from
-     * @return object
-     * @throws NG_Exception
-     */
-    public function from($from = null) {
-        if (!isset($from)):
-            throw new NG_Exception("FROM is Required to build query");
-        endif;
-        $this->from = $from;
-        return $this->build();
-    }
-
-    /**
-     * join()
-     * Sets join object with table and clause
-     * @access public
-     * @see build()
-     * @param string $table
-     * @param string $clause
-     * @return object
-     */
-    public function join($table, $clause) {
-        $this->join['table'] = $table;
-        $this->join['clause'] = $clause;
-        return $this->build();
-    }
-
-    /**
-     * innerJoin()
-     * Sets inner join object with table and clause
-     * @access public
-     * @see build()
-     * @param string $table
-     * @param string $clause
-     * @return object
-     */
-    public function innerJoin($table, $clause) {
-        $this->innerJoin['table'] = $table;
-        $this->innerJoin['clause'] = $clause;
-        return $this->build();
-    }
-
-    /**
-     * leftKoin()
-     * Sets left join object with table and clause
-     * @access public
-     * @see build()
-     * @param string $table
-     * @param string $clause
-     * @return object
-     */
-    public function leftJoin($table, $clause) {
-        $this->leftJoin['table'] = $table;
-        $this->leftJoin['clause'] = $clause;
-        return $this->build();
-    }
-
-    /**
-     * rightJoin()
-     * Sets right join object with table and clause
-     * @access public
-     * @see build()
-     * @param string $table
-     * @param string $clause
-     * @return object
-     */
-    public function rightJoin($table, $clause) {
-        $this->rightJoin['table'] = $table;
-        $this->rightJoin['clause'] = $clause;
-        return $this->build();
-    }
-
-    /**
-     * where()
-     * Sets where object
-     * example: where("foo = ?", "bar")
-     * @see build()
-     * @param string $where
-     * @param string $value
-     * @return object
-     */
-    public function where($where, $value = null) {
-        $this->where = str_replace("?", "'" . addslashes($value) . "'", $where);
-        return $this->build();
-    }
-
-    /**
-     * group()
-     * Sets groupBy object
-     * @see build()
-     * @param string $field
-     * @return object
-     */
-    public function group($field) {
-        $this->groupBy = $field;
-        return $this->build();
-    }
-
-    /**
-     * having()
-     * Set having object
-     * example: having("foo > ?", "bar")
-     * @param string $condition
-     * @param string $value
-     * @return object
-     */
-    public function having($condition, $value = null) {
-        $this->having = str_replace("?", "'" . addslashes($value) . "'", $condition);
-        return $this->build();
-    }
-
-    /**
-     * order()
-     * Sets orderBy Object
-     * Example: order("FOO", "DESC") or order("RAND(" . date("Ymd") . ")", "DESC")
-     * @access public
-     * @see build()
-     * @param string $field
-     * @param string $clause
-     * @return object
-     */
-    public function order($field, $clause) {
-        if (strpos($field, "(") === false):
-            $field = "`" . $field . "`";
-        endif;
-        $this->orderBy = $field . " " . $clause;
-        return $this->build();
-    }
-
-    /**
-     * limit()
-     * Sets limit object
-     * @access public
-     * @see build()
-     * @param int $int
-     * @return object
-     */
-    public function limit($int) {
-        $this->limit = $int;
-        return $this->build();
-    }
-
-    /**
-     * build()
-     * Builds query and sets as query object
-     * @access private
-     * @return \NG\Query
-     */
-    private function build() {
-        if (isset($this->table) and isset($this->insertData)):
-            $this->query = "INSERT INTO `" . $this->table . "` ";
-            $fields = implode("`, `", array_keys($this->insertData));
-            $this->query.= "(`" . $fields . "`)";
-            $values = implode("', '", $this->insertData);
-            $this->query.= " VALUES ('" . $values . "')";
-        endif;
         if (isset($this->table) and isset($this->updateData)):
             $this->query = "UPDATE `" . $this->table . "` SET ";
             if (is_array($this->updateData)):
@@ -379,81 +232,268 @@ class Query {
                 $this->query = substr($this->query, 0, -2) . " ";
             endif;
         endif;
+        return $this;
+    }
+
+    /**
+     * delete()
+     * Starts delete statement 
+     * @access public     
+     * @return object \NG\Query()
+     */
+    public function delete() {
+        $this->deleteTable = true;
         if (isset($this->deleteTable)):
             $this->query = "DELETE ";
         endif;
-        if (isset($this->select)):
-            if (is_array($this->select)):
-                $this->select = implode("`, `", $this->select);
-            endif;
-            if (strpos($this->select, "(") === false):
-                $this->select = ($this->select == "*") ? $this->select : "`" . $this->select . "`";
-            endif;
-            $this->query = "SELECT " . $this->select . " ";
+        return $this;
+    }
+
+    /**
+     * from()
+     * Sets from object
+     * @access public     
+     * @param string|array $from Table name as a string or Array of strings, example: array("table1 a", "table2 b", "table3 c")
+     * @return object \NG\Query()
+     * @throws NG_Exception
+     */
+    public function from($from) {
+        if (!isset($from)):
+            throw new NG_Exception("FROM is Required to build query");
         endif;
+        $this->from = $from;
         if (isset($this->from)):
             if (is_array($this->from)):
-                $this->from = implode("`, `", $this->from);
+                foreach ($this->from as $key => $value):
+                    $this->from[$key] = $this->escapeField($value);
+                endforeach;
+                $this->from = implode(", ", $this->from);
+            else:
+                $this->from = $this->escapeField($this->from);
             endif;
-            $this->query.= "FROM `" . $this->from . "` ";
+            $this->query.= "FROM " . $this->from . " ";
         endif;
-        if (isset($this->join)):
-            $this->query.="JOIN `" . $this->join['table'] . "` ON " . $this->join['clause'] . " ";
-        endif;
-        if (isset($this->innerJoin)):
-            $this->query.="INNER JOIN `" . $this->innerJoin['table'] . "` ON " . $this->innerJoin['clause'] . " ";
-        endif;
-        if (isset($this->leftJoin)):
-            $this->query.="LEFT JOIN `" . $this->leftJoin['table'] . "` ON " . $this->leftJoin['clause'] . " ";
-        endif;
-        if (isset($this->rightJoin)):
-            $this->query.="RIGHT JOIN `" . $this->rightJoin['table'] . "` ON " . $this->rightJoin['clause'] . " ";
-        endif;
-        if (isset($this->where)):
-            $this->query.="WHERE " . $this->where . " ";
-        endif;
-        if (isset($this->having)):
+        return $this;
+    }
+
+    /**
+     * join()
+     * Sets join object
+     * @access public     
+     * @param string $table Table name as a string
+     * @param string $clause Clause as a string, example "a.fieldname = b.fieldname"
+     * @return object \NG\Query()
+     */
+    public function join($table, $clause) {
+        $k = (count($this->join) > 0) ? count($this->join) + 1 : 0;
+        $this->join[$k]['table'] = $this->escapeField($table);
+        $this->join[$k]['clause'] = $clause;
+        $this->query.="JOIN `" . $this->join[$k]['table'] . "` ON " . $this->join[$k]['clause'] . " ";
+        return $this;
+    }
+
+    /**
+     * innerJoin()
+     * Sets inner join object 
+     * @access public     
+     * @param string $table Table name as a string
+     * @param string $clause Clause as a string, example "a.fieldname = b.fieldname"
+     * @return object \NG\Query()
+     */
+    public function innerJoin($table, $clause) {
+        $k = (count($this->innerJoin) > 0) ? count($this->innerJoin) + 1 : 0;
+        $this->innerJoin[$k]['table'] = $this->escapeField($table);
+        $this->innerJoin[$k]['clause'] = $clause;
+        $this->query.="INNER JOIN `" . $this->innerJoin[$k]['table'] . "` ON " . $this->innerJoin[$k]['clause'] . " ";
+        return $this;
+    }
+
+    /**
+     * leftKoin()
+     * Sets left join object 
+     * @access public     
+     * @param string $table Table name as a string
+     * @param string $clause Clause as a string, example "a.fieldname = b.fieldname"
+     * @return object \NG\Query()
+     */
+    public function leftJoin($table, $clause) {
+        $k = (count($this->leftJoin) > 0) ? count($this->leftJoin) + 1 : 0;
+        $this->leftJoin[$k]['table'] = $this->escapeField($table);
+        $this->leftJoin[$k]['clause'] = $clause;
+        $this->query.="LEFT JOIN `" . $this->leftJoin[$k]['table'] . "` ON " . $this->leftJoin[$k]['clause'] . " ";
+        return $this;
+    }
+
+    /**
+     * rightJoin()
+     * Sets right join object
+     * @access public     
+     * @param string $table Table name as a string
+     * @param string $clause Clause as a string, example "a.fieldname = b.fieldname"
+     * @return object \NG\Query()
+     */
+    public function rightJoin($table, $clause) {
+        $k = (count($this->leftJoin) > 0) ? count($this->leftJoin) + 1 : 0;
+        $this->rightJoin[$k]['table'] = $this->escapeField($table);
+        $this->rightJoin[$k]['clause'] = $clause;
+        $this->query.="RIGHT JOIN `" . $this->rightJoin[$k]['table'] . "` ON " . $this->rightJoin[$k]['clause'] . " ";
+        return $this;
+    }
+
+    /**
+     * where()
+     * Sets where object         
+     * @param string $where where statement, example: ("fieldname = ?")
+     * @param string $value string value to be replaced in where statement
+     * @return object \NG\Query()
+     */
+    public function where($where, $value = null) {
+        $where = $this->escapeField($where);
+        $this->where = str_replace("?", "'" . addslashes($value) . "'", $where);
+        $this->query.="WHERE " . $this->where . " ";
+        return $this;
+    }
+
+    /**
+     * andWhere()
+     * Sets and where object     
+     * @param string $where where statement, example: ("fieldname = ?")
+     * @param string $value string value to be replaced in where statement
+     * @return object \NG\Query()
+     */
+    public function andWhere($where, $value = null) {
+        $where = $this->escapeField($where);
+        $this->andWhere[] = str_replace("?", "'" . addslashes($value) . "'", $where);
+        $this->query.="AND " . end($this->andWhere) . " ";
+        return $this;
+    }
+
+    /**
+     * orWhere()
+     * Sets or where object
+     * @param string $where where statement, example: ("fieldname = ?")
+     * @param string $value string value to be replaced in where statement
+     * @return object \NG\Query()
+     */
+    public function orWhere($where, $value = null) {
+        $where = $this->escapeField($where);
+        $this->orWhere[] = str_replace("?", "'" . addslashes($value) . "'", $where);
+        $this->query.="OR " . end($this->orWhere) . " ";
+        return $this;
+    }
+
+    /**
+     * having()
+     * Set having object     
+     * @param string $condition having statement, example: ("fieldname = ?")
+     * @param string $value string value to be replaced in having statement
+     * @return object \NG\Query()
+     */
+    public function having($condition, $value = null) {
+        $condition = $this->escapeField($condition);
+        $this->having[] = str_replace("?", "'" . addslashes($value) . "'", $condition);
+        if (count($this->having) > 1):
+            $this->query.="AND " . $this->having . " ";
+        else:
             $this->query.="HAVING " . $this->having . " ";
         endif;
+        return $this;
+    }
+
+    /**
+     * group()
+     * Sets groupBy object     
+     * @param string $field Name of field to group by
+     * @return object \NG\Query()
+     */
+    public function group($field) {
+        $this->groupBy = $field;
         if (isset($this->groupBy)):
             if (is_array($this->groupBy)):
                 $this->groupBy = implode("`, `", $this->groupBy);
             endif;
             $this->query.="GROUP BY `" . $this->groupBy . "` ";
         endif;
-        if (isset($this->orderBy)):
-            $this->query.="ORDER BY " . $this->orderBy . " ";
-        endif;
-        if (isset($this->limit)):
-            $this->query.="LIMIT " . $this->limit;
-        endif;
-        $this->unsetObjects();
-        trim($this->query);
         return $this;
     }
 
     /**
-     * unserObjects()
-     * unserts Objects
-     * @access private
-     * @return void
+     * order()
+     * Sets orderBy Object     
+     * @access public     
+     * @param string $field fieldname to order by, exampe "Fieldname" or "RAND(" . date("Ymd") . ")"
+     * @param string $clause order clause, example: "DESC" or "ASC"
+     * @return object \NG\Query()
      */
-    private function unsetObjects() {
-        foreach ($this as $property => $value):
-            if ($this->$property !== $this->query):
-                unset($this->$property);
+    public function order($field, $clause = null) {
+        if (strpos($field, "(") === false):
+            $field = $this->escapeField($field);
+        endif;
+        $this->orderBy[] = $field . " " . $clause;
+        if (count($this->orderBy) > 1):
+            $this->query.=", " . end($this->orderBy) . " ";
+        else:
+            $this->query.="ORDER BY " . end($this->orderBy) . " ";
+        endif;
+        return $this;
+    }
+
+    /**
+     * limit()
+     * Sets limit object
+     * @access public     
+     * @param int $int Must be numeric 
+     * @return object \NG\Query()
+     */
+    public function limit($int) {
+        $this->limit = $int;
+        if (isset($this->limit)):
+            $this->query.="LIMIT " . $this->limit;
+        endif;
+        return $this;
+    }
+
+    /**
+     * escapeField
+     * will identify and escape first field
+     * @access private
+     * @param string $str example a.fieldname 
+     * @return string
+     */
+    private function escapeField($str) {
+        if (strpos($str, '`') === false):
+            $tmpstr = explode(" ", $str);
+            if (strpos($tmpstr[0], ".") === false):
+                $tmpstr[0] = "`" . $tmpstr[0] . "`";
+            else:
+                $strD = explode(".", $tmpstr[0]);
+                $tmpstr[0] = $strD[0] . ".`" . $strD[1] . "`";
             endif;
-        endforeach;
+            $str = implode(" ", $tmpstr);
+        endif;
+        return $str;
+    }
+
+    /**
+     * getQuery()
+     * Alias to __toString() Function.
+     * Returns query as a string
+     * @see __toString()
+     * @access public
+     * @return string
+     */
+    public function getQuery() {
+        return $this->__toString();
     }
 
     /**
      * __toString()
-     * return query as a string
+     * Returns query as a string
      * @access public
      * @return string 
      */
     public function __toString() {
-        return $this->query;
+        return trim($this->query);
     }
 
 }
