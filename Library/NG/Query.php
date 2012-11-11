@@ -288,7 +288,7 @@ class Query {
         $k = (count($this->join) > 0) ? count($this->join) + 1 : 0;
         $this->join[$k]['table'] = $this->escapeField($table);
         $this->join[$k]['clause'] = $clause;
-        $this->query.="JOIN `" . $this->join[$k]['table'] . "` ON " . $this->join[$k]['clause'] . " ";
+        $this->query.="JOIN " . $this->join[$k]['table'] . " ON " . $this->join[$k]['clause'] . " ";
         return $this;
     }
 
@@ -304,7 +304,7 @@ class Query {
         $k = (count($this->innerJoin) > 0) ? count($this->innerJoin) + 1 : 0;
         $this->innerJoin[$k]['table'] = $this->escapeField($table);
         $this->innerJoin[$k]['clause'] = $clause;
-        $this->query.="INNER JOIN `" . $this->innerJoin[$k]['table'] . "` ON " . $this->innerJoin[$k]['clause'] . " ";
+        $this->query.="INNER JOIN " . $this->innerJoin[$k]['table'] . " ON " . $this->innerJoin[$k]['clause'] . " ";
         return $this;
     }
 
@@ -320,7 +320,7 @@ class Query {
         $k = (count($this->leftJoin) > 0) ? count($this->leftJoin) + 1 : 0;
         $this->leftJoin[$k]['table'] = $this->escapeField($table);
         $this->leftJoin[$k]['clause'] = $clause;
-        $this->query.="LEFT JOIN `" . $this->leftJoin[$k]['table'] . "` ON " . $this->leftJoin[$k]['clause'] . " ";
+        $this->query.="LEFT JOIN " . $this->leftJoin[$k]['table'] . " ON " . $this->leftJoin[$k]['clause'] . " ";
         return $this;
     }
 
@@ -336,7 +336,7 @@ class Query {
         $k = (count($this->leftJoin) > 0) ? count($this->leftJoin) + 1 : 0;
         $this->rightJoin[$k]['table'] = $this->escapeField($table);
         $this->rightJoin[$k]['clause'] = $clause;
-        $this->query.="RIGHT JOIN `" . $this->rightJoin[$k]['table'] . "` ON " . $this->rightJoin[$k]['clause'] . " ";
+        $this->query.="RIGHT JOIN " . $this->rightJoin[$k]['table'] . " ON " . $this->rightJoin[$k]['clause'] . " ";
         return $this;
     }
 

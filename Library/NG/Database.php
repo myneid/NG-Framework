@@ -134,7 +134,7 @@ class Database extends \PDO {
      * @access public
      * @return array|int|boolean
      */
-    public function run($sql) {
+    public function query($sql) {
         try {
             $pdostmt = $this->prepare($sql);
             if ($pdostmt->execute() !== false):
@@ -148,6 +148,21 @@ class Database extends \PDO {
             echo $e->getMessage();
             return false;
         }
+    }
+
+    public function escape($value, $parameter_type = \PDO::PARAM_STR) {
+        return $this->quote($value, $parameter_type);
+    }
+
+    public function quote($value, $parameter_type = \PDO::PARAM_STR) {
+        if (is_null($value)) {
+            return "NULL";
+        }
+        return substr(parent::quote($value, $parameter_type), 1, -1);
+    }
+
+    public function lastInsertId($name = null) {
+        return parent::lastInsertId($name);
     }
 
     /**

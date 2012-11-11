@@ -172,7 +172,7 @@ class Uri {
             foreach ($subdirectories as $key => $directory):
                 unset($pathChunks[$key]);
             endforeach;
-            $pathChunks = array_values($pathChunks);
+            $pathChunks = array_values($pathChunks);            
             if (!empty($pathChunks[0])):
                 return $pathChunks;
             endif;

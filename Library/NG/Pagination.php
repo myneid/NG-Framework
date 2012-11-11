@@ -313,7 +313,7 @@ class Pagination {
         if ($limitFrom >= $this->totalCount):
             $limitFrom = 0;
         endif;
-        $this->query->limit($limitFrom . ", " . $this->itemsPerPage);
+        $this->query->limit($limitFrom . ", " . $this->itemsPerPage);        
         return $this->db->fetchAll($this->query->__toString());
     }
 
@@ -327,7 +327,7 @@ class Pagination {
      * @return array
      */
     public function getPagination($range = 5, $nextAndPreviousButtons = true, $additionalButtons = true) {
-        $this->calculateTotal();
+        $this->calculateTotal();        
         if ($additionalButtons):
             $paginator[] = array($this->defaultPageNumberName => 1,
                 $this->defaultPaginationSegmentName => $this->defaultPaginationSegmentNameFirst,
