@@ -2,7 +2,7 @@
 
 /**
  * NG Framework
- * Version 0.1 Beta
+ * Version 0.1 
  * Copyright (c) 2012, Nick Gejadze
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
@@ -35,7 +35,6 @@ namespace NG;
 class Registry extends \ArrayObject {
 
     /**
-     * $instance
      * Holds Class Instance
      * @access protected 
      * @var object
@@ -43,10 +42,9 @@ class Registry extends \ArrayObject {
     private static $instance = null;
 
     /**
-     * init()
      * if $instance is not set starts new \NG\Registry and return instance
-     * @access public
-     * @return object
+     * @access public 
+     * @return object Class instance
      */
     public static function init() {
         if (self::$instance === null):
@@ -56,26 +54,48 @@ class Registry extends \ArrayObject {
     }
 
     /**
-     * set()
-     * Set key and value in registry
-     * @param string $index
-     * @param string $value
+     * Sets key and value in registry
+     * @param mixed $index Unique key identifier
+     * @param mixed $value Value for the specified index
      * @access public
-     * @return void
+     * @return void No value is returned.
      */
     public static function set($index, $value) {
         self::init()->offsetSet($index, $value);
     }
 
     /**
-     * get()
      * Gets value for key from Registry
-     * @param string $index
+     * @param mixed $index Unique key identifier
      * @access public
-     * @return void
+     * @return mixed The value at the specified index or FALSE.
      */
     public static function get($index) {
-        return self::init()->offsetGet($index);
+        if (self::init()->checkIndex($index)):
+            return self::init()->offsetGet($index);
+        endif;
+        return false;
+    }
+
+    /**
+     * Checks if key is registered in the Registry
+     * @param mixed $index  Unique key identifier
+     * @return boolean TRUE is returned if key is found, otherwise false
+     */
+    public static function checkIndex($index) {
+        if (self::init()->offsetExists($index)):
+            return true;
+        endif;
+        return false;
+    }
+
+    /**
+     * Returns instance object
+     * @access public
+     * @return object returns singelton registry object
+     */
+    public static function getInstance() {
+        return self::init();
     }
 
 }
