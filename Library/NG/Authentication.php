@@ -140,6 +140,7 @@ class Authentication {
             return false;
         endif;
         $this->table = $table;
+        $this->sessionName = $this->sessionName.$this->table;
         return $this;
     }
 
