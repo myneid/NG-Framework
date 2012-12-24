@@ -157,7 +157,7 @@ class View {
     public function render() {
         if (!$this->noRender):
             try {
-                $viewFile = ROOT . DS . 'Application' . DS . 'View' . DS . $this->controller . DS . ucfirst(strtolower($this->action)) . '.phtml';
+                $viewFile = ROOT . DS . APPDIR . DS . 'View' . DS . $this->controller . DS . ucfirst(strtolower($this->action)) . '.phtml';
                 if (!file_exists($viewFile)):
                     throw new Exception($viewFile);
                 endif;
