@@ -30,13 +30,17 @@
  * @version 0.1
  * @copyright (c) 2012, Nick Gejadze
  */
-class ErrorController extends Controller {
+class ErrorController extends NG\Controller {
 
     public function init() {
         
     }
 
     public function ErrorAction() {
+        
+    }
+    
+    public function NotfoundAction(){
         
     }
 
