@@ -191,7 +191,7 @@ class Route {
                 foreach ($routes as $route):
                     if (!isset(self::init()->routeSelected)):
                         $routeArray = explode('/', trim($route['route'], '/'));
-                        if (count($routeArray) == count($pathArray)):
+                        if (is_array($pathArray) and !empty($routeArray[0]) and count($routeArray) == count($pathArray)):
                             if (isset($route['defaults']['controller'])):
                                 self::init()->setController($route['defaults']['controller']);
                                 self::init()->routeSelected = true;
