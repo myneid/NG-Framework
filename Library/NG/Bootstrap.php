@@ -96,7 +96,7 @@ class Bootstrap {
             if (class_exists($className)):
                 $app = new $className;
             else:
-                \NG\Route::redirect(\NG\Uri::baseUrl() . "/error/notfound", "404");
+                \NG\Route::redirect(\NG\Uri::baseUrl() . "error/notfound", "404");
                 exit();
             endif;
             $this->_controllerLoaded = true;
