@@ -31,6 +31,7 @@
  */
 define('DEVELOPMENT_ENVIRONMENT', true);
 define('ROOT', realpath(dirname(__FILE__)."/../"));
+define('PUBLIC_PATH', realpath(dirname(__FILE__)));
 define('DS', DIRECTORY_SEPARATOR);
 define('APPDIR', 'Application');
 
