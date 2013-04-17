@@ -59,6 +59,14 @@ class Uri {
     protected $rootPath;
 
     /**
+     * $subdirectories
+     * Holds Subdirectories if any..
+     * @access protected
+     * @var array
+     */
+    protected $subdirectories;
+
+    /**
      * $baseURL
      * Holds base URL of application
      * @access protected 
@@ -74,7 +82,7 @@ class Uri {
      */
     public function __construct() {
         $this->requestedPath = $_SERVER['REQUEST_URI'];
-        $this->rootPath = ROOT;
+        $this->rootPath = PUBLIC_PATH;
     }
 
     /**
@@ -98,7 +106,11 @@ class Uri {
      */
     public static function baseUrl() {
         if (!isset(self::init()->baseURL) OR empty(self::init()->baseURL)):
-            self::setBaseUrl('http://' . $_SERVER['HTTP_HOST'] . "/");
+            $subdirectories = null;
+            if(isset(self::init()->subdirectories) and is_array(self::init()->subdirectories) and !empty(self::init()->subdirectories)):
+                $subdirectories = implode("/",self::init()->subdirectories)."/";
+            endif;    
+            self::setBaseUrl('http://' . $_SERVER['HTTP_HOST'] . "/".$subdirectories);
         endif;
         return self::init()->baseURL;
     }
@@ -168,8 +180,8 @@ class Uri {
         if (isset($this->requestedPath)):
             $pathChunks = explode('/', trim($this->requestedPath, '/'));
             $rootChunks = explode('/', trim($this->rootPath, '/'));
-            $subdirectories = array_intersect($pathChunks, $rootChunks);
-            foreach ($subdirectories as $key => $directory):
+            self::init()->subdirectories = array_intersect($pathChunks, $rootChunks);
+            foreach (self::init()->subdirectories as $key => $directory):
                 unset($pathChunks[$key]);
             endforeach;
             $pathChunks = array_values($pathChunks);            
