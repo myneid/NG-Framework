@@ -163,7 +163,7 @@ class Uri {
         if ($pathChunks):
             $result = array();
             for ($i = 0; $i < sizeof($pathChunks); $i+=2):
-                $result[preg_replace("/\\.[^.\\s]{3,4}$/", "", $pathChunks[$i])] = isset($pathChunks[$i + 1]) ? preg_replace("/\\.[^.\\s]{3,4}$/", "", $pathChunks[$i + 1]) : false;
+                $result[preg_replace("/\\.[^.\\s]{2,4}$/", "", $pathChunks[$i])] = isset($pathChunks[$i + 1]) ? preg_replace("/\\.[^.\\s]{2,4}$/", "", $pathChunks[$i + 1]) : false;
             endfor;
             return $result;
         endif;
