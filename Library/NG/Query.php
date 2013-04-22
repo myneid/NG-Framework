@@ -190,12 +190,12 @@ class Query {
      * @param string $table Table name you want to insert into
      * @param array $data Array of strings, example array("fieldname" => "value")
      * @return object \NG\Query()
-     * @throws NG_Exception
+     * @throws \NG\Exception
      */
     public function insert($table, $data) {
         $this->table = $table;
         if (!isset($data) or !is_array($data)):
-            throw new NG_Exception("Insert Values are required to build query");
+            throw new \NG\Exception("Insert Values are required to build query");
         endif;
         $this->insertData = $data;
         if (isset($this->table) and isset($this->insertData)):
@@ -215,12 +215,12 @@ class Query {
      * @param string $table Table name you want to update
      * @param type $data Array of strings that needs to be updated, example array("fieldname" => "value");
      * @return object \NG\Query()
-     * @throws NG_Exception
+     * @throws \NG\Exception
      */
     public function update($table, $data) {
         $this->table = $table;
         if (!isset($data) or !is_array($data)):
-            throw new NG_Exception("Update Values are required to build query");
+            throw new \NG\Exception("Update Values are required to build query");
         endif;
         $this->updateData = $data;
         if (isset($this->table) and isset($this->updateData)):
@@ -255,11 +255,11 @@ class Query {
      * @access public     
      * @param string|array $from Table name as a string or Array of strings, example: array("table1 a", "table2 b", "table3 c")
      * @return object \NG\Query()
-     * @throws NG_Exception
+     * @throws \NG\Exception
      */
     public function from($from) {
         if (!isset($from)):
-            throw new NG_Exception("FROM is Required to build query");
+            throw new \NG\Exception("FROM is Required to build query");
         endif;
         $this->from = $from;
         if (isset($this->from)):
