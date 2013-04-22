@@ -40,12 +40,12 @@ class Configuration {
      * @see convertINIToArray()
      * @param string $filename
      * @return array
-     * @throws NG_Exception
+     * @throws \NG\Exception
      */
     public static function loadConfigFile($filename) {
         if (!isset($filename) or !is_string($filename)):
             require_once(ROOT . DS . 'library' . DS . 'Exception.php');
-            throw new NG_Exception("Filename is Required For Configuration");
+            throw new \NG\Exception("Filename is Required For Configuration");
         endif;
         $ini = parse_ini_file($filename);
         $ini_array = self::convertINIToArray($ini);
