@@ -125,7 +125,7 @@ class Autoloader {
      * @return type
      */
     private function stripSlashes($value) {
-        $value = is_array($value) ? array_map('stripSlashesDeep', $value) : stripslashes($value);
+        $value = is_array($value) ? array_map(array($this,'stripSlashesDeep'), $value) : stripslashes($value);
         return $value;
     }
 
@@ -138,7 +138,7 @@ class Autoloader {
      */
     private function stripSlashesDeep($value) {
         if (is_array($value)):
-            $value = array_map('stripSlashesDeep', $value);
+            $value = array_map(array($this,'stripSlashesDeep'), $value);
         elseif (is_object($value)):
             $vars = get_object_vars($value);
             foreach ($vars as $key => $data):
