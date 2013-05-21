@@ -194,7 +194,7 @@ class Httpclient {
      * Removes Created cookie file
      * @access private
      */
-    private function cleanUpCookie() {
+    private function cleanUpCookie() {        
         if(isset($this->cookie)):
             unlink($this->cookie);
         endif;
@@ -227,6 +227,8 @@ class Httpclient {
         $response['content'] = curl_exec($ch);
         $response['info'] = curl_getinfo($ch);
         curl_close($ch);
+        unset($ch);
+        $this->cleanUpCookie();
         if ($response['info']['http_code'] == 301 || $response['info']['http_code'] == 302):
             $headers = get_headers($response['info']['url']);
             foreach ($headers as $value) :
@@ -244,17 +246,5 @@ class Httpclient {
             return $response;
         endif;
     }
-
-    /**
-     * __descruct()
-     * Calls cleanUpCookie() method
-     * @see cleanUpCookie()
-     * @access public
-     * @return void
-     */
-    public function __destruct() {
-        $this->cleanUpCookie();
-    }
-
 }
 
