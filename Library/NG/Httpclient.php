@@ -195,7 +195,9 @@ class Httpclient {
      * @access private
      */
     private function cleanUpCookie() {
-        @unlink($this->cookie);
+        if(isset($this->cookie)):
+            unlink($this->cookie);
+        endif;
     }
 
     /**
