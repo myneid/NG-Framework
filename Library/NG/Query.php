@@ -202,7 +202,7 @@ class Query {
             $this->query = "INSERT INTO `" . $this->table . "` ";
             $fields = implode("`, `", array_keys($this->insertData));
             $this->query.= "(`" . $fields . "`)";
-            $values = implode("', '", $this->insertData);
+            $values = implode("', '", $this->escapeValue($this->insertData));
             $this->query.= " VALUES ('" . $values . "')";
         endif;
         return $this;
@@ -227,7 +227,7 @@ class Query {
             $this->query = "UPDATE `" . $this->table . "` SET ";
             if (is_array($this->updateData)):
                 foreach ($this->updateData as $field => $value):
-                    $this->query .= "`" . $field . "` = '" . $value . "', ";
+                    $this->query .= "`" . $field . "` = '" . $this->escapeValue($value) . "', ";
                 endforeach;
                 $this->query = substr($this->query, 0, -2) . " ";
             endif;
@@ -472,6 +472,26 @@ class Query {
             $str = implode(" ", $tmpstr);
         endif;
         return $str;
+    }
+
+    /**
+     * escapeValue
+     * will escape string or array
+     * @access private
+     * @param mixed $value
+     * @return mixed
+     */
+    private function escapeValue($value){
+        if(is_array($value)):
+            foreach($value as $key => $val):
+                $value[$key] = $this->escapeValue($val);
+            endforeach;
+            return $value;
+        else:
+            $search=array("\\","\0","\n","\r","\x1a","'",'"');
+            $replace=array("\\\\","\\0","\\n","\\r","\Z","\'",'\"');
+            return str_replace($search,$replace,$value);
+        endif;
     }
 
     /**
