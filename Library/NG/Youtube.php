@@ -176,7 +176,6 @@ class Youtube {
         );
         $this->httpclient = new \NG\Httpclient();
         $this->httpclient->setUri($url);
-        \NG\App::debug($url);
         $request = $this->httpclient->request();
         return $this->setData(json_decode($request['content'], true));
     }
