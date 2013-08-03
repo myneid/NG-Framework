@@ -176,6 +176,7 @@ class Youtube {
         );
         $this->httpclient = new \NG\Httpclient();
         $this->httpclient->setUri($url);
+        \NG\App::debug($url);
         $request = $this->httpclient->request();
         return $this->setData(json_decode($request['content'], true));
     }
@@ -338,10 +339,10 @@ class Youtube {
 
     private function getSingelElement($element, $videoID) {
         if (isset($element) and isset($videoID) and isset($this->result[$videoID])):
-            return $this->result[$videoID][$element];
+            return isset($this->result[$videoID][$element]) ? $this->result[$videoID][$element] : false;
         elseif (isset($element) and isset($videoID)):
             if ($this->getEntry($videoID)):
-                return $this->result[$videoID][$element];
+                return isset($this->result[$videoID][$element]) ? $this->result[$videoID][$element] : false;
             endif;
         endif;
         return false;
@@ -351,6 +352,7 @@ class Youtube {
         if (isset($data['feed']['entry'])):
             foreach ($data['feed']['entry'] as $key => $entry):
                 $this->setEntryData($entry);
+                $this->setEntryDescription($data['entry']);
                 $this->setEntryKeywords($entry);
                 $this->setEntryThumbnails($entry);
                 $this->setEntryContent($entry);
@@ -369,6 +371,7 @@ class Youtube {
             return array_keys($this->result);
         elseif (isset($data['entry'])):
             $this->setEntryData($data['entry']);
+            $this->setEntryDescription($data['entry']);
             $this->setEntryKeywords($data['entry']);
             $this->setEntryThumbnails($data['entry']);
             $this->setEntryContent($data['entry']);
