@@ -110,11 +110,8 @@ class Uri {
             if(isset(self::init()->subdirectories) and is_array(self::init()->subdirectories) and !empty(self::init()->subdirectories)):
                 $subdirectories = implode("/",self::init()->subdirectories)."/";
             endif;    
-            if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""):
-                self::setBaseUrl('http://' . $_SERVER['HTTP_HOST'] . "/".$subdirectories);
-            else:
-                self::setBaseUrl('https://' . $_SERVER['HTTP_HOST'] . "/".$subdirectories);
-            endif;
+            $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https://' : 'http://';
+            self::setBaseUrl( $protocol . $_SERVER['HTTP_HOST'] . "/".$subdirectories);
         endif;
         return self::init()->baseURL;
     }
