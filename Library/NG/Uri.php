@@ -109,6 +109,9 @@ class Uri {
             $subdirectories = null;
             if(isset(self::init()->subdirectories) and is_array(self::init()->subdirectories) and !empty(self::init()->subdirectories)):
                 $subdirectories = implode("/",self::init()->subdirectories)."/";
+                if($subdirectories == "/"):
+                    $subdirectories = null;
+                endif;
             endif;    
             $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https://' : 'http://';
             self::setBaseUrl( $protocol . $_SERVER['HTTP_HOST'] . "/".$subdirectories);
