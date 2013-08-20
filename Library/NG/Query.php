@@ -255,7 +255,7 @@ class Query {
             $this->query = "UPDATE `" . $this->table . "` SET ";
             if (is_array($this->updateData)):
                 foreach ($this->updateData as $field => $value):
-                    $this->query .= "`" . $field . "` = '" . $value . "', ";
+                    $this->query .= "`" . $field . "` = '" . addSlashes($value) . "', ";
                 endforeach;
                 $this->query = substr($this->query, 0, -2) . " ";
             endif;
