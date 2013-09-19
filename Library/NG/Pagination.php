@@ -313,7 +313,7 @@ class Pagination {
         if ($limitFrom >= $this->totalCount):
             $limitFrom = 0;
         endif;
-        $this->query->limit($limitFrom . ", " . $this->itemsPerPage);        
+        $this->query->limit($limitFrom . ", " . $this->itemsPerPage); 
         return $this->db->fetchAll($this->query->__toString());
     }
 
