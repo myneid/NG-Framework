@@ -391,7 +391,7 @@ class Youtube {
     }
 
     private function setEntryData($entry) {
-        if (isset($entry)):
+        if (isset($entry) and isset($entry['content']['src'])):
             $this->result[$entry['media$group']['yt$videoid']['$t']] = array(
                 "videoID" => $entry['media$group']['yt$videoid']['$t'],
                 "published" => $entry['published']['$t'],
