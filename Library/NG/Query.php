@@ -75,14 +75,6 @@ class Query {
     private $updateData;
 
     /**
-     * $deleteTable
-     * Holds boolean value if delete query is requested or not
-     * @access private
-     * @var boolean
-     */
-    private $deleteTable;
-
-    /**
      * $from
      * Holds from string or array
      * @access private 
@@ -184,53 +176,28 @@ class Query {
     }
 
     /**
-     * is_multi
-     * @param array $array
-     * @access private
-     * @return boolean
-     */
-    private function is_multi($array) {
-        $rv = array_filter($array,'is_array');
-        if(count($rv)>0): 
-            return true;
-        endif;
-        return false;
-    }
-
-    /**
      * insert()
      * Builds insert statement 
      * @access public     
      * @param string $table Table name you want to insert into
      * @param array $data Array of strings, example array("fieldname" => "value")
-     * @param bool $ignore Converts insert query into Insert ignore query
      * @return object \NG\Query()
      * @throws \NG\Exception
      */
-    public function insert($table, $data, $ignore = false) {
+    public function insert($table, $data) {
         $this->table = $table;
         if (!isset($data) or !is_array($data)):
             throw new \NG\Exception("Insert Values are required to build query");
         endif;
         $this->insertData = $data;
-        $ignoreCommand = ""; 
-        if($ignore):
-            $ignoreCommand = "IGNORE"; 
-        endif;
-        $this->query = "INSERT ".$ignoreCommand." INTO `" . $this->table . "` ";
-        $multi = $this->is_multi($this->insertData);
-        if(isset($this->table) and isset($this->insertData) and $multi):
-            $fields = implode("`, `", array_keys($this->insertData[0]));
-            $this->query.= "(`" . $fields . "`) VALUES";
-            foreach($this->insertData as $insertData):
-                $values = implode("', '", array_map('addSlashes', $insertData));
-                $this->query.= " ('" . $values . "'),";
-            endforeach;
-            $this->query = rtrim($this->query, ",").";";
-        elseif (isset($this->table) and isset($this->insertData)):
+        if (isset($this->table) and isset($this->insertData)):
+            $this->query = "INSERT INTO `" . $this->table . "` ";
             $fields = implode("`, `", array_keys($this->insertData));
             $this->query.= "(`" . $fields . "`)";
-            $values = implode("', '", array_map('addSlashes',$this->insertData));
+            $cleanArray = array_map(function($val) { 
+                return addslashes($val); 
+            }, $this->insertData);
+            $values = implode("', '", $cleanArray);
             $this->query.= " VALUES ('" . $values . "')";
         endif;
         return $this;
@@ -255,7 +222,7 @@ class Query {
             $this->query = "UPDATE `" . $this->table . "` SET ";
             if (is_array($this->updateData)):
                 foreach ($this->updateData as $field => $value):
-                    $this->query .= "`" . $field . "` = '" . addSlashes($value) . "', ";
+                    $this->query .= "`" . $field . "` = '" . $value . "', ";
                 endforeach;
                 $this->query = substr($this->query, 0, -2) . " ";
             endif;
@@ -270,10 +237,7 @@ class Query {
      * @return object \NG\Query()
      */
     public function delete() {
-        $this->deleteTable = true;
-        if (isset($this->deleteTable)):
-            $this->query = "DELETE ";
-        endif;
+        $this->query = "DELETE ";
         return $this;
     }
 
@@ -438,11 +402,9 @@ class Query {
         $this->groupBy = $field;
         if (isset($this->groupBy)):
             if (is_array($this->groupBy)):
-                $this->groupBy = implode(", ", array_map(array($this,"escapeField"),$this->groupBy));
-            else:
-                $this->groupBy = $this->escapeField($this->groupBy);
+                $this->groupBy = implode("`, `", $this->groupBy);
             endif;
-            $this->query.="GROUP BY " . $this->groupBy . " ";
+            $this->query.="GROUP BY `" . $this->groupBy . "` ";
         endif;
         return $this;
     }
@@ -527,3 +489,5 @@ class Query {
     }
 
 }
+
+?>
