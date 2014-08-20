@@ -75,13 +75,22 @@ class Uri {
     protected $baseURL;
 
     /**
+     * $query_string
+     * holds teh array of query string from get requests
+     * @access protected
+     * @var array
+     **/
+    protected $query_string;
+
+    /**
      * __construct
      * Sets reuqestedPath and rootPath, ROOT must be defined
      * @access public
      * @return void
      */
     public function __construct() {
-        $this->requestedPath = $_SERVER['REQUEST_URI'];
+        $this->requestedPath = $_SERVER['SCRIPT_NAME'];
+	$this->query_string = $_GET;
         $this->rootPath = PUBLIC_PATH;
     }
 
@@ -92,9 +101,8 @@ class Uri {
      * @return object
      */
     public static function init() {
-        if (self::$instance === null):
+        if (self::$instance === null)
             self::$instance = new Uri;
-        endif;
         return self::$instance;
     }
 

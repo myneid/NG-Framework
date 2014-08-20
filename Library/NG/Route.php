@@ -107,9 +107,8 @@ class Route {
      * @return object
      */
     public static function init() {
-        if (self::$instance === null):
+        if (self::$instance === null)
             self::$instance = new Route;
-        endif;
         return self::$instance;
     }
 
